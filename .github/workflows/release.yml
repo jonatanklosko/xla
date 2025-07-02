@@ -14,7 +14,7 @@ jobs:
   #   if: github.ref_type == 'tag'
   #   permissions:
   #     contents: write
-  #   runs-on: ubuntu-22.04
+  #   runs-on: ubuntu-latest
   #   steps:
   #     - uses: actions/checkout@v4
   #     - name: Create draft release
@@ -25,22 +25,56 @@ jobs:
   #           gh release create --title ${{ github.ref_name }} --draft ${{ github.ref_name }}
   #         fi
 
-  # linux:
-  #   name: "x86_64-linux-gnu-{cpu,tpu}"
-  #   # needs: [create_draft_release]
-  #   # We intentionally build on ubuntu 22 to compile against
-  #   # an older version of glibc
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - run: builds/build.sh cpu
-
-  linux_cuda:
-    name: "x86_64-linux-gnu-{cpu,tpu}"
+  linux:
+    name: "x86_64-linux-gnu-cpu"
     # needs: [create_draft_release]
     # We intentionally build on ubuntu 22 to compile against
     # an older version of glibc
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    steps:
+      - run: rm -rf /opt/hostedtoolcache
+      - uses: actions/checkout@v4
+      - run: builds/build.sh cpu
+
+  linux_cuda12:
+    name: "x86_64-linux-gnu-cuda12"
+    # needs: [create_draft_release]
+    # We intentionally build on ubuntu 22 to compile against
+    # an older version of glibc
+    runs-on: ubuntu-latest
+    steps:
+      - run: rm -rf /opt/hostedtoolcache
+      - uses: actions/checkout@v4
+      - run: builds/build.sh cuda12
+
+  linux_tpu:
+    name: "x86_64-linux-gnu-tpu"
+    # needs: [create_draft_release]
+    # We intentionally build on ubuntu 22 to compile against
+    # an older version of glibc
+    runs-on: ubuntu-latest
+    steps:
+      - run: rm -rf /opt/hostedtoolcache
+      - uses: actions/checkout@v4
+      - run: builds/build.sh tpu
+
+  linux_arm:
+    name: "aarch64-linux-gnu-cpu"
+    # needs: [create_draft_release]
+    # We intentionally build on ubuntu 22 to compile against
+    # an older version of glibc
+    runs-on: ubuntu-latest-arm
+    steps:
+      - run: rm -rf /opt/hostedtoolcache
+      - uses: actions/checkout@v4
+      - run: builds/build.sh cpu
+
+  linux_arm_cuda12:
+    name: "aarch64-linux-gnu-cuda12"
+    # needs: [create_draft_release]
+    # We intentionally build on ubuntu 22 to compile against
+    # an older version of glibc
+    runs-on: ubuntu-latest-arm
     steps:
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
