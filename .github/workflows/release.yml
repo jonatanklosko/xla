@@ -14,7 +14,7 @@ jobs:
   #   if: github.ref_type == 'tag'
   #   permissions:
   #     contents: write
-  #   runs-on: ubuntu-latest
+  #   runs-on: ubuntu-24.04
   #   steps:
   #     - uses: actions/checkout@v4
   #     - name: Create draft release
@@ -30,7 +30,7 @@ jobs:
     # needs: [create_draft_release]
     # We intentionally build on ubuntu 22 to compile against
     # an older version of glibc
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
     # needs: [create_draft_release]
     # We intentionally build on ubuntu 22 to compile against
     # an older version of glibc
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
     # needs: [create_draft_release]
     # We intentionally build on ubuntu 22 to compile against
     # an older version of glibc
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
     # needs: [create_draft_release]
     # We intentionally build on ubuntu 22 to compile against
     # an older version of glibc
-    runs-on: ubuntu-latest-arm
+    runs-on: ubuntu-24.04-arm
     steps:
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
@@ -74,7 +74,7 @@ jobs:
     # needs: [create_draft_release]
     # We intentionally build on ubuntu 22 to compile against
     # an older version of glibc
-    runs-on: ubuntu-latest-arm
+    runs-on: ubuntu-24.04-arm
     steps:
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
