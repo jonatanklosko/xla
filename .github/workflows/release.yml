@@ -25,15 +25,15 @@ jobs:
   #           gh release create --title ${{ github.ref_name }} --draft ${{ github.ref_name }}
   #         fi
 
-  linux:
-    name: "x86_64-linux-gnu-{cpu,tpu}"
-    # needs: [create_draft_release]
-    # We intentionally build on ubuntu 22 to compile against
-    # an older version of glibc
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - run: builds/build.sh cpu
+  # linux:
+  #   name: "x86_64-linux-gnu-{cpu,tpu}"
+  #   # needs: [create_draft_release]
+  #   # We intentionally build on ubuntu 22 to compile against
+  #   # an older version of glibc
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: builds/build.sh cpu
 
   linux_cuda:
     name: "x86_64-linux-gnu-{cpu,tpu}"
@@ -42,6 +42,7 @@ jobs:
     # an older version of glibc
     runs-on: ubuntu-22.04
     steps:
+      - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
       - run: builds/build.sh cuda12
 
