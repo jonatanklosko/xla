@@ -4,9 +4,9 @@ set -ex
 
 cd "$(dirname "$0")/../.."
 
-ref="$2"
-release_name="$1"
-files="${@:2}"
+ref="$1"
+release_name="$2"
+files="${@:3}"
 
 # Create the release, if not present.
 if ! gh release view $release_name; then
