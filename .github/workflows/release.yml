@@ -1,130 +1,126 @@
 name: Release
 on:
   push:
-    branches:
-      - jk-ci-docker
-    # tags:
-    #   - "v*.*.*"
+    tags:
+      - "v*.*.*"
 
 env:
+  NX_XLA_REF: ${{ github.ref_name }}
+  NX_XLA_RELEASE_NAME: ${{ github.ref_name }}
+
+  # Build envs for non-docker jobs.
   USE_BAZEL_VERSION: 7.4.1
+  XLA_BUILD: true
+  XLA_CACHE_DIR: tmp/build
 
 jobs:
-  # create_draft_release:
-  #   if: github.ref_type == 'tag'
-  #   permissions:
-  #     contents: write
-  #   runs-on: ubuntu-24.04
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Create draft release
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       run: |
-  #         if ! gh release list | grep -q ${{ github.ref_name }}; then
-  #           gh release create --title ${{ github.ref_name }} --draft ${{ github.ref_name }}
-  #         fi
-
-  linux:
+  linux-cpu:
     name: "x86_64-linux-gnu-cpu"
-    # needs: [create_draft_release]
-    # We intentionally build on ubuntu 22 to compile against
-    # an older version of glibc
     runs-on: ubuntu-24.04
     steps:
+      # Free up space, see https://github.com/orgs/community/discussions/25678#discussioncomment-5242449
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.NX_XLA_REF }}
       - run: builds/build.sh cpu
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/build/*/build/*
 
-  linux_cuda12:
+  linux-cuda:
     name: "x86_64-linux-gnu-cuda12"
-    # needs: [create_draft_release]
-    # We intentionally build on ubuntu 22 to compile against
-    # an older version of glibc
     runs-on: ubuntu-24.04
     steps:
+      # Free up space, see https://github.com/orgs/community/discussions/25678#discussioncomment-5242449
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.NX_XLA_REF }}
       - run: builds/build.sh cuda12
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/build/*/build/*
 
-  linux_tpu:
+  linux-tpu:
     name: "x86_64-linux-gnu-tpu"
-    # needs: [create_draft_release]
-    # We intentionally build on ubuntu 22 to compile against
-    # an older version of glibc
     runs-on: ubuntu-24.04
     steps:
+      # Free up space, see https://github.com/orgs/community/discussions/25678#discussioncomment-5242449
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.NX_XLA_REF }}
       - run: builds/build.sh tpu
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/build/*/build/*
 
-  linux_arm:
+  linux-arm-cpu:
     name: "aarch64-linux-gnu-cpu"
-    # needs: [create_draft_release]
-    # We intentionally build on ubuntu 22 to compile against
-    # an older version of glibc
     runs-on: ubuntu-24.04-arm
     steps:
+      # Free up space, see https://github.com/orgs/community/discussions/25678#discussioncomment-5242449
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.NX_XLA_REF }}
       - run: builds/build.sh cpu
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/build/*/build/*
 
-  linux_arm_cuda12:
+  linux-arm-cuda:
     name: "aarch64-linux-gnu-cuda12"
-    # needs: [create_draft_release]
-    # We intentionally build on ubuntu 22 to compile against
-    # an older version of glibc
     runs-on: ubuntu-24.04-arm
     steps:
+      # Free up space, see https://github.com/orgs/community/discussions/25678#discussioncomment-5242449
       - run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.NX_XLA_REF }}
       - run: builds/build.sh cuda12
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/build/*/build/*
 
-  # macos:
-  #   name: "x86_64-darwin-cpu"
-  #   needs: [create_draft_release]
-  #   runs-on: macos-13
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - run: brew install elixir
-  #     - run: mix local.hex --force
-  #     # Setup the compilation environment
-  #     - uses: bazel-contrib/setup-bazel@0.14.0
-  #     - uses: actions/setup-python@v5
-  #       with:
-  #         python-version: "3.11"
-  #     - run: python -m pip install --upgrade pip numpy
-  #     # Build and upload the archive
-  #     - run: mix deps.get
-  #     - run: .github/scripts/compile_and_upload.sh ${{ github.ref_name }}
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         XLA_TARGET: cpu
-  #         # This runner comes with Clang 14, which does not support the -mavxvnniint8
-  #         # CLI flag. We can install newer Clang, however at some point Bazel toolchains
-  #         # invoke xcrun clang, which always uses the system version from Xcode, ignoring
-  #         # whichever version we installed ourselves. With the flag below, we make sure
-  #         # this flag is not passed in the first place.
-  #         # See https://github.com/tensorflow/tensorflow/pull/87514
-  #         BUILD_FLAGS: "--define=xnn_enable_avxvnniint8=false"
+  macos:
+    name: "x86_64-darwin-cpu"
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.NX_XLA_REF }}
+      - run: brew install elixir
+      - run: mix local.hex --force
+      # Setup the compilation environment
+      - uses: bazel-contrib/setup-bazel@0.14.0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip numpy
+      # Build and upload the archive
+      - run: mix deps.get
+      - run: .github/scripts/compile_and_upload.sh ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XLA_TARGET: cpu
+          # This runner comes with Clang 14, which does not support the -mavxvnniint8
+          # CLI flag. We can install newer Clang, however at some point Bazel toolchains
+          # invoke xcrun clang, which always uses the system version from Xcode, ignoring
+          # whichever version we installed ourselves. With the flag below, we make sure
+          # this flag is not passed in the first place.
+          # See https://github.com/tensorflow/tensorflow/pull/87514
+          BUILD_FLAGS: "--define=xnn_enable_avxvnniint8=false"
 
-  # macos_arm:
-  #   name: "aarch64-darwin-cpu"
-  #   needs: [create_draft_release]
-  #   runs-on: macos-14
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - run: brew install elixir
-  #     - run: mix local.hex --force
-  #     # Setup the compilation environment
-  #     - uses: bazel-contrib/setup-bazel@0.14.0
-  #     - uses: actions/setup-python@v5
-  #       with:
-  #         python-version: "3.11"
-  #     - run: python -m pip install --upgrade pip numpy
-  #     # Build and upload the archive
-  #     - run: mix deps.get
-  #     - run: .github/scripts/compile_and_upload.sh ${{ github.ref_name }}
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         XLA_TARGET: cpu
+  macos-arm:
+    name: "aarch64-darwin-cpu"
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.NX_XLA_REF }}
+      - run: brew install elixir
+      - run: mix local.hex --force
+      # Setup the compilation environment
+      - uses: bazel-contrib/setup-bazel@0.14.0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip numpy
+      # Build and upload the archive
+      - run: mix deps.get
+      - run: .github/scripts/compile_and_upload.sh ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XLA_TARGET: cpu

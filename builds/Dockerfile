@@ -1,4 +1,5 @@
 ARG VARIANT
+# By default we build on Ubuntu 20 to compile against an older version of glibc.
 ARG BASE_IMAGE="hexpm/elixir:1.15.8-erlang-24.3.4.17-ubuntu-focal-20240427"
 
 # Pre-stages for base image variants
