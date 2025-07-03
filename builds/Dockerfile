@@ -83,7 +83,7 @@ WORKDIR /xla
 ARG XLA_TARGET
 
 ENV XLA_TARGET=${XLA_TARGET}
-ENV XLA_CACHE_DIR=/build
+ENV XLA_CACHE_DIR=/cache
 ENV XLA_BUILD=true
 
 COPY mix.exs mix.lock ./

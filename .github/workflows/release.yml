@@ -8,10 +8,10 @@ env:
   NX_XLA_REF: ${{ github.ref_name }}
   NX_XLA_RELEASE_NAME: ${{ github.ref_name }}
 
-  # Build envs for non-docker jobs.
+  # Build envs for non-Docker jobs.
   USE_BAZEL_VERSION: 7.4.1
   XLA_BUILD: true
-  XLA_CACHE_DIR: tmp/build
+  XLA_CACHE_DIR: tmp/cache
 
 jobs:
   linux-cpu:
@@ -24,7 +24,7 @@ jobs:
         with:
           ref: ${{ env.NX_XLA_REF }}
       - run: builds/build.sh cpu
-      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/build/*/build/*
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/cache/*/build/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -38,7 +38,7 @@ jobs:
         with:
           ref: ${{ env.NX_XLA_REF }}
       - run: builds/build.sh cuda12
-      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/build/*/build/*
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/cache/*/build/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -52,7 +52,7 @@ jobs:
         with:
           ref: ${{ env.NX_XLA_REF }}
       - run: builds/build.sh tpu
-      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/build/*/build/*
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/cache/*/build/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -66,7 +66,7 @@ jobs:
         with:
           ref: ${{ env.NX_XLA_REF }}
       - run: builds/build.sh cpu
-      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/build/*/build/*
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/cache/*/build/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -80,7 +80,7 @@ jobs:
         with:
           ref: ${{ env.NX_XLA_REF }}
       - run: builds/build.sh cuda12
-      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/build/*/build/*
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} builds/output/*/cache/*/build/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -110,7 +110,7 @@ jobs:
           # this flag is not passed in the first place.
           # See https://github.com/tensorflow/tensorflow/pull/87514
           BUILD_FLAGS: "--define=xnn_enable_avxvnniint8=false"
-      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} tmp/build/*/build/*
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} tmp/cache/*/build/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -134,6 +134,6 @@ jobs:
       - run: mix compile
         env:
           XLA_TARGET: cpu
-      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} tmp/build/*/build/*
+      - run: .github/scripts/upload_artifact.sh ${{ env.NX_XLA_REF }} ${{ env.NX_XLA_RELEASE_NAME }} tmp/cache/*/build/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
