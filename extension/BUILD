@@ -13,7 +13,7 @@ package(default_visibility=["//visibility:private"])
 cc_binary(
   name = "libxla_extension.so",
   deps = [
-    #"//xla:xla_proto_cc_impl",
+    "//xla:xla_proto_cc_impl",
     #"//xla:xla_data_proto_cc_impl",
     #"//xla:autotune_results_proto_cc_impl",
     #"//xla:autotuning_proto_cc_impl",
@@ -27,7 +27,7 @@ cc_binary(
     #"//xla/stream_executor/gpu:gpu_init_impl",
     #"//xla/stream_executor/host:host_platform",
     #"//xla:literal",
-    "//xla:shape_util",
+    #"//xla:shape_util",
     #"//xla/tsl/platform:status",
     #"//xla/tsl/platform:statusor",
     #"//xla/tsl/concurrency:async_value",
